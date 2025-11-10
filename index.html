@@ -29,7 +29,7 @@ body {
 #collection-popup button { cursor:pointer; }
 
 #collection-popup h1 {
-  font-size: 1.8rem; /* صغرنا الكلمة */
+  font-size: 1.5rem;
   background: linear-gradient(to right, #000000, #FFD700);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -74,6 +74,20 @@ button:hover {
   transform: scale(1.1);
   box-shadow:0 0 25px #ff0,0 0 50px #f0f,0 0 75px #0ff;
 }
+
+.switch-btn {
+  background:#FFD700;
+  color:#000;
+  font-weight:bold;
+  border-radius:12px;
+  padding:8px 12px;
+  margin:10px auto;
+  cursor:pointer;
+  display:block;
+  text-align:center;
+  box-shadow:0 0 10px #FFD700,0 0 20px #FFA500;
+}
+.switch-btn:hover { transform:scale(1.1); }
 </style>
 </head>
 <body>
@@ -81,26 +95,31 @@ button:hover {
 <!-- نافذة الترحيب -->
 <div id="collection-popup" class="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm bg-gold/70">
   <div class="bg-white/90 p-8 rounded-3xl shadow-2xl w-96 text-center animate-pop ring-8 ring-yellow-400 pulse">
-    <h1 class="font-gold mb-4 drop-gold-lg animate-pop">💥أهلا بيك في ستور💥   [ماتشتريش]</h1>
+    <h1 class="mb-4 animate-pop">💥أهلا بيك في ستور💥   [ماتشتريش]</h1>
     <p class="text-gray-700 mb-6 text-lg font-semibold">عايز تشوف منتجاتنا الحريمي ولا الرجالي؟</p>
-    <button id="male-collection" class="w-full bg-yellow-500 text-white py-3 rounded-xl mb-3 font-black text-xl shadow-lg hover:scale-125 transition-all pulse">👞 رجالي</button>
-    <button id="female-collection" class="w-full bg-pink-500 text-white py-3 rounded-xl font-black text-xl shadow-lg hover:scale-125 transition-all pulse">👠 حريمي</button>
+    <button id="male-collection" class="w-full bg-yellow-500 text-white py-3 rounded-xl mb-3 font-black text-xl shadow-lg pulse">👞 رجالي</button>
+    <button id="female-collection" class="w-full bg-pink-500 text-white py-3 rounded-xl font-black text-xl shadow-lg pulse">👠 حريمي</button>
   </div>
 </div>
 
 <div id="toast"></div>
 
-<header class="max-w-6xl mx-auto flex items-center justify-between p-6 border-b border-yellow-200">
+<header class="max-w-6xl mx-auto flex items-center justify-between p-6 border-b border-yellow-200 relative">
   <div class="flex items-center gap-3">
     <img src="https://i.postimg.cc/TwvxgRrN/550816979-844120788145479-6887980593067427015-n.jpg" alt="شعار" class="w-12 h-12 rounded-full ring-4 ring-yellow-400 shadow-md hover:scale-150 transition-all">
-    <div>
+    <div class="flex flex-col">
       <h1 class="text-1xl font-black text-gray-800 leading-tight animate-pop">ماتشتريش</h1>
       <p class="text-sm text-black-500 -mt-1 tracking-wide animate-pop">غير اللي يليق بيك ✨</p>
     </div>
   </div>
-  <button id="cart-btn" class="px-5 py-2 bg-yellow-500 text-white rounded-xl flex items-center gap-2 font-black hover:scale-125 transition-all shadow-lg pulse">
-    🛒 <span>السلة (0)</span>
-  </button>
+  <div class="flex items-center gap-3">
+    <button id="switch-collection" class="bg-yellow-500 text-white px-0.0.9 py-1 text-sm rounded-lg font-bold mt-20 hover:scale-110 transition-all">
+  تبديل القسم
+</button>
+    <button id="cart-btn" class="px-5 py-2 bg-yellow-500 text-white rounded-xl flex items-center gap-2 font-black hover:scale-125 transition-all shadow-lg pulse">
+      🛒 <span>السلة (0)</span>
+    </button>
+  </div>
 </header>
 
 <main id="products" class="max-w-6xl mx-auto grid sm:grid-cols-2 lg:grid-cols-3 gap-8 p-6"></main>
@@ -114,6 +133,7 @@ button:hover {
     <div id="cart-items" class="flex-1 overflow-y-auto space-y-3"></div>
     <div class="mt-4 font-black text-lg text-right text-gray-800" id="total">الإجمالي: <span class='text-yellow-600 font-black'>0 جنيه</span></div>
     
+
     <div class="mt-6 border-t pt-4">
       <h3 class="font-black mb-2 text-center text-gray-700">📦 بيانات الطلب</h3>
       <form id="order-form" class="space-y-2">
@@ -168,13 +188,24 @@ const form=document.getElementById("order-form");
 const sizeSelect=document.getElementById("size-select");
 const collectionPopup=document.getElementById("collection-popup");
 const toast=document.getElementById("toast");
+const switchBtn=document.getElementById("switch-collection").onclick = () => {
+  if(selectedType === "male") selectCollection("female");
+  else selectCollection("male");
+};
 
 document.getElementById("male-collection").onclick=()=>selectCollection("male");
 document.getElementById("female-collection").onclick=()=>selectCollection("female");
+switchBtn.onclick=()=>switchCollection();
 
 function selectCollection(type){
 selectedType=type;
 collectionPopup.classList.add("hidden");
+renderProducts();
+renderSizes();
+}
+
+function switchCollection(){
+selectedType = selectedType==="male"?"female":"male";
 renderProducts();
 renderSizes();
 }
@@ -247,7 +278,11 @@ e.preventDefault();
 const data=Object.fromEntries(new FormData(form));
 data.items=cart.map(i=>`${i.name} × ${i.qty}`).join(", ");
 try{
-await fetch("https://formbold.com/s/oylkY",{method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data)});
+await fetch("https://formbold.com/s/oylkY", {
+  method:"POST",
+  headers:{"Content-Type":"application/json"},
+  body:JSON.stringify(data)
+});
 alert("تم إرسال الطلب بنجاح✅ والأوردر هيوصلك في أسرع وقت🥰");
 cart.length=0; updateCart(); form.reset(); cartWindow.classList.add("hidden");
 }catch{
@@ -255,5 +290,6 @@ alert("❌ حدث خطأ أثناء الإرسال، حاول مرة أخرى");
 }
 };
 </script>
+
 </body>
 </html>
