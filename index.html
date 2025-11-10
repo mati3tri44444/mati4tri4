@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ماتشتريش-متجر شوزات </title>
+<title>ماتشتريش - متجر شوزات</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
   #collection-popup { pointer-events: auto; z-index: 9999; }
@@ -23,7 +23,7 @@
   </div>
 </div>
 
-<!-- Toast رسالة السلة -->
+<!-- Toast -->
 <div id="toast" class="fixed top-5 right-5 bg-yellow-500 text-white px-6 py-3 rounded-xl shadow-2xl border-l-4 border-yellow-600 hidden z-50 font-semibold text-lg transition-transform transform -translate-y-5 opacity-0"></div>
 
 <header class="max-w-6xl mx-auto flex items-center justify-between p-6 border-b">
@@ -69,31 +69,8 @@
 </div>
 
 <script>
-const allProducts = [
-  // منتجات الرجالي
-  { id:1, name:"الديك الفرنسي ابيض ف احمر", price:280, image:"https://i.postimg.cc/MKX7qKRy/570893393-871336388757252-74939307031368722-n.jpg", type:"male" },
-  { id:2, name:"الديك الفرنسي ابيض ف اسود", price:280, image:"https://i.postimg.cc/wjwYJ2MQ/568744248-871336448757246-5143257899591873607-n.jpg", type:"male" },
-  { id:3, name:"نيو بلانس ابيض ف اسود", price:280, image:"https://i.postimg.cc/q7gcMJW6/569032872-871336988757192-1100054162643539695-n.jpg", type:"male" },
-  { id:4, name:"نيو بلانس اسود ف ابيض", price:280, image:"https://i.postimg.cc/CxrDtydN/569293050-871336785423879-1324089676429450702-n.jpg", type:"male" },
-  { id:5, name:"نيو بلانس اسود ف بيچ", price:280, image:"https://i.postimg.cc/QC08Y3SW/571350934-871336632090561-6089648114365501598-n.jpg", type:"male" },
-  { id:6, name:"بولو اسود ف رصاصي", price:280, image:"https://i.postimg.cc/B6kqFghN/569057434-871336695423888-9120106915970436646-n.jpg", type:"male" },
-  { id:7, name:"بولو ابيض ف اسود", price:280, image:"https://i.postimg.cc/ZYwQwn49/571146280-871336928757198-8793438079405721773-n.jpg", type:"male" },
-  { id:8, name:"بولو اسود ف ابيض", price:280, image:"https://i.postimg.cc/YCTKb9Nv/571354815-871336845423873-6702696002398135669-n.jpg", type:"male" },
-  { id:9, name:"اير ماكس ابيض", price:300, image:"https://i.postimg.cc/XqzMy7QB/574424610-876301951594029-1038148045299282375-n.jpg", type:"male" },
-  { id:10, name:"فاشون شتوي رصاصي", price:350, image:"https://i.postimg.cc/pdYgJBsH/577158719-880485034509054-2260797099197674745-n.jpg", type:"male" },
-  { id:11, name:"فاشون شتوي اسود", price:350, image:"https://i.postimg.cc/tTq8SVc5/577126114-880484954509062-1861825450046656111-n.jpg", type:"male" },
-  { id:12, name:"فاشون شتوي بيچ", price:350, image:"https://i.postimg.cc/V6Kp3kQd/575166211-880484801175744-5927234518724415400-n.jpg", type:"male" },
-  { id:13, name:"هاف بوط شتوي بيچ", price:350, image:"https://i.postimg.cc/SR55x1xd/577229294-880551887835702-2466422141298345740-n.jpg", type:"male" },
-
-  // منتجات الحريمي
-  { id:14, name:"نايك توينز ابيض ف رصاصي", price:300, image:"https://i.postimg.cc/1zvbdrqn/576843905-883947857496105-6790202241856284727-n.jpg", type:"female" },
-  { id:15, name:"نايك توينز ابيض ف نبيتي", price:300, image:"https://i.postimg.cc/Pfg90xP4/576914567-883947607496130-1454587221797658254-n.jpg", type:"female" },
-  { id:16, name:"نايك توينز ابيض ف اسود", price:300, image:"https://i.postimg.cc/W3QYRWpC/579484530-883947780829446-2943000794086995307-n.jpg", type:"female" },
-  { id:17, name:"المستورد اسود ف ابيض", price:300, image:"https://i.postimg.cc/66v1VXYp/578611395-883947950829429-6215013070031930120-n.jpg", type:"female" },
-  { id:18, name:"المستورد ابيض ف اسود", price:300, image:"https://i.postimg.cc/SxyTpzq2/577446192-883948177496073-5727602666866394815-n.jpg", type:"female" },
-  { id:19, name:"المستورد ابيض ف بيچ", price:300, image:"https://i.postimg.cc/d035hPhk/577427138-883948047496086-4254395622299081664-n.jpg", type:"female" }
-];
-
+// 🛍 تحميل المنتجات من localStorage
+let allProducts = JSON.parse(localStorage.getItem("products")) || [];
 let selectedType = null;
 const cart = [];
 const productContainer = document.getElementById("products");
@@ -120,6 +97,10 @@ function selectCollection(type) {
 function renderProducts() {
   productContainer.innerHTML = '';
   const filtered = allProducts.filter(p => p.type === selectedType);
+  if (filtered.length === 0) {
+    productContainer.innerHTML = `<p class='col-span-full text-center text-gray-500'>لا توجد منتجات متاحة الآن 😅</p>`;
+    return;
+  }
   filtered.forEach(p => {
     const div = document.createElement("div");
     div.className = "bg-white rounded-2xl shadow-lg p-4 hover:shadow-2xl transition";
@@ -151,7 +132,7 @@ function addToCart(product) {
   if (found) found.qty++;
   else cart.push({ ...product, qty: 1 });
   updateCart();
-  showToast("تم إضافة المنتج إلى السلة. اذهب للسلة لاتمام الشراء واختيار المقاس");
+  showToast("تم إضافة المنتج إلى السلة ✅");
 }
 
 function showToast(message) {
@@ -162,7 +143,7 @@ function showToast(message) {
     toast.classList.remove("opacity-100", "translate-y-0");
     toast.classList.add("opacity-0", "-translate-y-5");
     setTimeout(()=>toast.classList.add("hidden"), 500);
-  }, 4000); 
+  }, 3000); 
 }
 
 function removeFromCart(id) {
@@ -204,17 +185,16 @@ form.onsubmit = async e => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-    alert("تم إرسال الطلب بنجاح✅ والأوردر هيوصلك في أسرع وقت بإذن الله🥰");
+    alert("✅ تم إرسال الطلب بنجاح!");
     cart.length = 0;
     updateCart();
     form.reset();
     cartWindow.classList.add("hidden");
   } catch {
-    alert("❌ حدث خطأ أثناء الإرسال، حاول مرة أخرى");
+    alert("❌ حدث خطأ أثناء الإرسال، حاول مرة أخرى.");
   }
 };
 </script>
 
 </body>
 </html>
-
