@@ -118,7 +118,6 @@ function hideLoader(){ loader.style.display='none'; }
 
 // المنتجات
 const allProducts = [
-  // منتجات رجالي
   { id:1, name:"الديك الفرنسي ابيض ف احمر", price:280, image:"https://i.postimg.cc/MKX7qKRy/570893393-871336388757252-74939307031368722-n.jpg", type:"male" },
   { id:2, name:"الديك الفرنسي ابيض ف اسود", price:280, image:"https://i.postimg.cc/wjwYJ2MQ/568744248-871336448757246-5143257899591873607-n.jpg", type:"male" },
   { id:3, name:"نيو بلانس ابيض ف اسود", price:280, image:"https://i.postimg.cc/q7gcMJW6/569032872-871336988757192-1100054162643539695-n.jpg", type:"male" },
@@ -132,22 +131,14 @@ const allProducts = [
   { id:11, name:"فاشون شتوي اسود", price:350, image:"https://i.postimg.cc/tTq8SVc5/577126114-880484954509062-1861825450046656111-n.jpg", type:"male" },
   { id:12, name:"فاشون شتوي بيچ", price:350, image:"https://i.postimg.cc/V6Kp3kQd/575166211-880484801175744-5927234518724415400-n.jpg", type:"male" },
   { id:13, name:"هاف بوط شتوي بيچ", price:350, image:"https://i.postimg.cc/SR55x1xd/577229294-880551887835702-2466422141298345740-n.jpg", type:"male" },
-
-  // ← هنا اترك مساحة إضافية لإضافة منتجات رجالي جديدة بسهولة →
-
-
-  // منتجات حريمي
   { id:14, name:"نايك توينز ابيض ف رصاصي", price:300, image:"https://i.postimg.cc/1zvbdrqn/576843905-883947857496105-6790202241856284727-n.jpg", type:"female" },
   { id:15, name:"نايك توينز ابيض ف نبيتي", price:300, image:"https://i.postimg.cc/Pfg90xP4/576914567-883947607496130-1454587221797658254-n.jpg", type:"female" },
   { id:16, name:"نايك توينز ابيض ف اسود", price:300, image:"https://i.postimg.cc/W3QYRWpC/579484530-883947780829446-2943000794086995307-n.jpg", type:"female" },
   { id:17, name:"المستورد اسود ف ابيض", price:300, image:"https://i.postimg.cc/66v1VXYp/578611395-883947950829429-6215013070031930120-n.jpg", type:"female" },
   { id:18, name:"المستورد ابيض ف اسود", price:300, image:"https://i.postimg.cc/SxyTpzq2/577446192-883948177496073-5727602666866394815-n.jpg", type:"female" },
   { id:19, name:"المستورد ابيض ف بيچ", price:300, image:"https://i.postimg.cc/d035hPhk/577427138-883948047496086-4254395622299081664-n.jpg", type:"female" },
-
-  // ← هنا اترك مساحة إضافية لإضافة منتجات حريمي جديدة بسهولة →
 ];
 
-// المقاسات المتاحة لكل منتج
 const productSizes = {
   1: { 41: "on", 42: "on", 43: "off", 44: "on", 45: "on" },
   2: { 41: "off", 42: "on", 43: "on", 44: "on", 45: "off" },
@@ -170,137 +161,160 @@ const productSizes = {
   19: { 37: "on", 38: "on", 39: "off", 40: "on", 41: "on" }
 };
 
-// الحالة
-let selectedType=null;
-const cart=[];
-const productContainer=document.getElementById("products");
-const cartBtn=document.getElementById("cart-btn");
-const cartWindow=document.getElementById("cart");
-const closeCart=document.getElementById("close-cart");
-const cartItems=document.getElementById("cart-items");
-const total=document.getElementById("total");
-const form=document.getElementById("order-form");
-const sizeSelect=document.getElementById("size-select");
-const collectionPopup=document.getElementById("collection-popup");
-const toast=document.getElementById("toast");
+let selectedType = null;
+const cart = [];
+const productContainer = document.getElementById("products");
+const cartBtn = document.getElementById("cart-btn");
+const cartWindow = document.getElementById("cart");
+const closeCart = document.getElementById("close-cart");
+const cartItems = document.getElementById("cart-items");
+const total = document.getElementById("total");
+const form = document.getElementById("order-form");
+const sizeSelect = document.getElementById("size-select");
+const collectionPopup = document.getElementById("collection-popup");
+const toast = document.getElementById("toast");
 
-const invoice=document.getElementById('invoice');
-const invoiceTable=document.querySelector('#invoice-table tbody');
-const invoiceTotal=document.getElementById('invoice-total');
-const invoiceCustomer=document.getElementById('invoice-customer');
-const invoiceDate=document.getElementById('invoice-date');
+const invoice = document.getElementById('invoice');
+const invoiceTable = document.querySelector('#invoice-table tbody');
+const invoiceTotal = document.getElementById('invoice-total');
+const invoiceCustomer = document.getElementById('invoice-customer');
+const invoiceDate = document.getElementById('invoice-date');
 
 // اختيار القسم
-document.getElementById("male-collection").onclick=()=>selectCollection("male");
-document.getElementById("female-collection").onclick=()=>selectCollection("female");
-document.getElementById("switch-collection").onclick=()=>switchCollection();
+document.getElementById("male-collection").onclick = () => selectCollection("male");
+document.getElementById("female-collection").onclick = () => selectCollection("female");
+document.getElementById("switch-collection").onclick = () => switchCollection();
 
-function selectCollection(type){ selectedType=type; collectionPopup.classList.add("hidden"); renderProducts(); }
-function switchCollection(){ selectedType = selectedType==="male"?"female":"male"; renderProducts(); }
+function selectCollection(type) {
+    selectedType = type;
+    collectionPopup.classList.add("hidden");
+    renderProducts();
+}
 
-// عرض المنتجات
-function renderProducts(){
-  productContainer.innerHTML='';
-  const filtered=allProducts.filter(p=>p.type===selectedType);
-  filtered.forEach((p,i)=>{
-    const div=document.createElement("div");
-    div.className="bg-white rounded-2xl shadow-lg p-4 hover:shadow-2xl transition-all hover:scale-[1.05] cursor-pointer product-fly";
-    div.style.animationDelay=`${i*0.1}s`;
-    div.innerHTML=`<img src="${p.image}" alt="${p.name}" class="w-full h-[300px] object-contain rounded-xl shadow-sm mb-3" />
-      <div class="text-center">
-        <h3 class="font-semibold text-lg text-gray-800">${p.name}</h3>
-        <p class="text-yellow-600 font-bold mt-1">${p.price} جنيه</p>
-        <button class="mt-3 px-5 py-2 bg-yellow-500 text-white rounded-lg font-semibold hover:scale-110 transition-all shadow-md">🛒أضف للسلة</button>
-      </div>`;
-    div.querySelector("button").onclick=()=>{ addToCart(p); };
-    productContainer.appendChild(div);
-  });
+function switchCollection() {
+    selectedType = selectedType === "male" ? "female" : "male";
+    renderProducts();
+}
+
+// عرض المنتجات مع المقاسات
+function renderProducts() {
+    productContainer.innerHTML = '';
+    const filtered = allProducts.filter(p => p.type === selectedType);
+    filtered.forEach((p, i) => {
+        const div = document.createElement("div");
+        div.className = "bg-white rounded-2xl shadow-lg p-4 hover:shadow-2xl transition-all hover:scale-[1.05] cursor-pointer product-fly";
+        div.style.animationDelay = `${i * 0.1}s`;
+
+        // عرض المقاسات المتاحة فقط
+        const sizes = productSizes[p.id];
+        const availableSizes = Object.entries(sizes)
+            .filter(([size, status]) => status === "on")
+            .map(([size]) => size)
+            .join(', ');
+
+        let sizesHTML = '';
+        if (availableSizes) {
+            sizesHTML = `<p class="mt-2 text-sm text-gray-600 font-semibold">المقاسات المتاحة: ${availableSizes}</p>`;
+        }
+
+        div.innerHTML = `
+            <img src="${p.image}" alt="${p.name}" class="w-full h-[300px] object-contain rounded-xl shadow-sm mb-3" />
+            <div class="text-center">
+                <h3 class="font-semibold text-lg text-gray-800">${p.name}</h3>
+                <p class="text-yellow-600 font-bold mt-1">${p.price} جنيه</p>
+                ${sizesHTML}
+                <button class="mt-3 px-5 py-2 bg-yellow-500 text-white rounded-lg font-semibold hover:scale-110 transition-all shadow-md">🛒أضف للسلة</button>
+            </div>
+        `;
+        div.querySelector("button").onclick = () => { addToCart(p); };
+        productContainer.appendChild(div);
+    });
 }
 
 // إضافة للسلة
-function addToCart(product){
-  const found=cart.find(p=>p.id===product.id);
-  if(found) found.qty++;
-  else cart.push({...product, qty:1});
-  updateCart();
-  renderSizesForCart(cart[cart.length-1].id); // تحديث المقاسات
-  toast.textContent=`تمت إضافة المنتج للسلة✅ اذهب للسلة لاختيار مقاسك👟`;
-  toast.style.opacity="1";
-  setTimeout(()=>{toast.style.opacity="0";},3000);
+function addToCart(product) {
+    const found = cart.find(p => p.id === product.id);
+    if (found) found.qty++;
+    else cart.push({ ...product, qty: 1 });
+    updateCart();
+    renderSizesForCart(cart[cart.length - 1].id); // تحديث المقاسات
+    toast.textContent = `تمت إضافة المنتج للسلة✅ اذهب للسلة لاختيار مقاسك👟`;
+    toast.style.opacity = "1";
+    setTimeout(() => { toast.style.opacity = "0"; }, 3000);
 }
 
 // تحديث السلة
-function updateCart(){
-  cartItems.innerHTML=''; let sum=0;
-  cart.forEach(item=>{
-    sum+=item.price*item.qty;
-    const div=document.createElement("div");
-    div.className="flex items-center justify-between py-3 border-b";
-    div.innerHTML=`<div><p class="font-medium text-gray-800">${item.name}</p><p class="text-sm text-gray-600">${item.qty} × ${item.price} جنيه</p></div>
-    <button class="text-red-500">🗑️</button>`;
-    div.querySelector("button").onclick=()=>removeFromCart(item.id);
-    cartItems.appendChild(div);
-  });
-  total.innerHTML=`الاجمالي بدون الشحن: <span class='text-yellow-600'>${sum} جنيه</span>`;
-  cartBtn.innerHTML=`🛒 <span>السلة (${cart.reduce((s,i)=>s+i.qty,0)})</span>`;
+function updateCart() {
+    cartItems.innerHTML = ''; let sum = 0;
+    cart.forEach(item => {
+        sum += item.price * item.qty;
+        const div = document.createElement("div");
+        div.className = "flex items-center justify-between py-3 border-b";
+        div.innerHTML = `<div><p class="font-medium text-gray-800">${item.name}</p><p class="text-sm text-gray-600">${item.qty} × ${item.price} جنيه</p></div>
+        <button class="text-red-500">🗑️</button>`;
+        div.querySelector("button").onclick = () => removeFromCart(item.id);
+        cartItems.appendChild(div);
+    });
+    total.innerHTML = `الاجمالي بدون الشحن: <span class='text-yellow-600'>${sum} جنيه</span>`;
+    cartBtn.innerHTML = `🛒 <span>السلة (${cart.reduce((s, i) => s + i.qty, 0)})</span>`;
 }
 
 // إزالة من السلة
-function removeFromCart(id){ const index=cart.findIndex(p=>p.id===id); if(index!==-1) cart.splice(index,1); updateCart(); }
+function removeFromCart(id) { const index = cart.findIndex(p => p.id === id); if (index !== -1) cart.splice(index, 1); updateCart(); }
 
 // عرض/إخفاء السلة
-cartBtn.onclick=()=>cartWindow.classList.remove("hidden");
-closeCart.onclick=()=>cartWindow.classList.add("hidden");
+cartBtn.onclick = () => cartWindow.classList.remove("hidden");
+closeCart.onclick = () => cartWindow.classList.add("hidden");
 
-// عرض المقاسات حسب المنتج
-function renderSizesForCart(productId){
-  sizeSelect.innerHTML='<option value="">-- اختار المقاس --</option>';
-  const sizes = productSizes[productId];
-  for (const size in sizes){
-    const status = sizes[size];
-    const opt = document.createElement('option');
-    opt.value = size;
-    opt.textContent = status==="on"?size:`${size} - غير متوفر`;
-    if(status==="off") opt.disabled = true;
-    sizeSelect.appendChild(opt);
-  }
+// عرض المقاسات حسب المنتج في السلة
+function renderSizesForCart(productId) {
+    sizeSelect.innerHTML = '<option value="">-- اختار المقاس --</option>';
+    const sizes = productSizes[productId];
+    for (const size in sizes) {
+        const status = sizes[size];
+        const opt = document.createElement('option');
+        opt.value = size;
+        opt.textContent = status === "on" ? size : `${size} - غير متوفر`;
+        if (status === "off") opt.disabled = true;
+        sizeSelect.appendChild(opt);
+    }
 }
 
 // إرسال الطلب
-form.onsubmit=async e=>{
-  e.preventDefault();
-  if(cart.length===0){ alert("السلة فارغة"); return; }
-  showLoader();
-  const data=Object.fromEntries(new FormData(form));
-  data.items=cart.map(i=>`${i.name} × ${i.qty}`).join(", ");
-  try{
-    await fetch("https://formbold.com/s/oylkY", { method:"POST", headers:{"Content-Type": "application/json"}, body:JSON.stringify(data) });
-    alert("تم ارسال الطلب بنجاح✅ والاوردر هيوصلك في اسرع وقت باذن الله 🥰 دوس تم لاستلام الفاتورة");
+form.onsubmit = async e => {
+    e.preventDefault();
+    if (cart.length === 0) { alert("السلة فارغة"); return; }
+    showLoader();
+    const data = Object.fromEntries(new FormData(form));
+    data.items = cart.map(i => `${i.name} × ${i.qty}`).join(", ");
+    try {
+        await fetch("https://formbold.com/s/oylkY", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+        alert("تم ارسال الطلب بنجاح✅ والاوردر هيوصلك في اسرع وقت باذن الله 🥰 دوس تم لاستلام الفاتورة");
 
-    // إنشاء الفاتورة
-    invoiceTable.innerHTML='';
-    cart.forEach(i=>{
-      invoiceTable.innerHTML+=`<tr><td>${i.name}</td><td>${i.qty}</td><td>${i.price*i.qty} جنيه</td></tr>`;
-    });
-    const sum = cart.reduce((s,i)=>s + i.price*i.qty,0);
-    invoiceTotal.textContent = `الاجمالي بدون الشحن: ${sum} جنيه`;
-    invoiceCustomer.textContent = `الاسم: ${data.name}, الهاتف: ${data.phone}, بديل: ${data.altPhone || '-'} , العنوان: ${data.address}, المقاس: ${data.size || '-'}`;
-    const now = new Date();
-    invoiceDate.textContent = `التاريخ والوقت: ${now.toLocaleString()}`;
-    invoice.style.display = 'block';
+        // إنشاء الفاتورة
+        invoiceTable.innerHTML = '';
+        cart.forEach(i => {
+            invoiceTable.innerHTML += `<tr><td>${i.name}</td><td>${i.qty}</td><td>${i.price * i.qty} جنيه</td></tr>`;
+        });
+        const sum = cart.reduce((s, i) => s + i.price * i.qty, 0);
+        invoiceTotal.textContent = `الاجمالي بدون الشحن: ${sum} جنيه`;
+        invoiceCustomer.textContent = `الاسم: ${data.name}, الهاتف: ${data.phone}, بديل: ${data.altPhone || '-'} , العنوان: ${data.address}, المقاس: ${data.size || '-'}`;
+        const now = new Date();
+        invoiceDate.textContent = `التاريخ والوقت: ${now.toLocaleString()}`;
+        invoice.style.display = 'block';
 
-    // إعادة ضبط السلة
-    cart.length = 0;
-    updateCart();
-    form.reset();
-    cartWindow.classList.add("hidden");
-    hideLoader();
+        // إعادة ضبط السلة
+        cart.length = 0;
+        updateCart();
+        form.reset();
+        cartWindow.classList.add("hidden");
+        hideLoader();
 
-  }catch(err){
-    hideLoader();
-    alert("❌ حدث خطأ أثناء الإرسال، حاول مرة أخرى");
-    console.error(err);
-  }
+    } catch (err) {
+        hideLoader();
+        alert("❌ حدث خطأ أثناء الإرسال، حاول مرة أخرى");
+        console.error(err);
+    }
 };
 </script>
 </body>
