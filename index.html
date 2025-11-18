@@ -7,18 +7,52 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@500;700;900&display=swap');
-body { font-family: 'Cairo', sans-serif; margin:0; padding:0; overflow-x:hidden;
-background: linear-gradient(45deg, #b8860b, #8b7500, #a67c00, #cdaa7d); background-size: 400% 400%; animation: goldBG 20s ease infinite; }
-@keyframes goldBG { 0%{background-position:0% 50%;} 50%{background-position:100% 50%;} 100%{background-position:0% 50%;} }
-#collection-popup { pointer-events:auto; z-index:9999; } #collection-popup button { cursor:pointer; }
-#collection-popup h1 { font-size: 1.5rem; background: linear-gradient(to right, #000000, #FFD700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-#toast { pointer-events:none; position:fixed; top:50%; left:50%; transform: translate(-50%, -50%);
-background: linear-gradient(90deg, #FFD700, #FFA500, #FFFACD, #FFD700); color:black; padding:15px 25px; border-radius:20px; font-weight:bold; font-size:1.2rem;
-box-shadow:0 0 30px #FFD700,0 0 60px #FFA500,0 0 90px #FFFACD; opacity:0; transition: all 0.5s ease; z-index:9999; text-align:center; }
-.animate-pop { animation: pop 0.6s ease forwards; } @keyframes pop { 0% {transform:scale(0); opacity:0;} 100% {transform:scale(1); opacity:1;} }
-.pulse { animation: pulseGlow 1.5s infinite; } @keyframes pulseGlow { 0% {box-shadow:0 0 15px #ff0;} 50% {box-shadow:0 0 45px #ff0;} 100% {box-shadow:0 0 15px #ff0;} }
-.product-fly { animation: flyIn 1s ease forwards; } @keyframes flyIn { 0% {opacity:0; transform: translateY(-500px) rotate(-10deg) scale(0.3);} 50%{ transform: translateY(-50px) rotate(5deg) scale(1.05);} 100% {opacity:1; transform: translateY(0) rotate(0) scale(1);} }
-img, button { transition: all 0.3s ease; } button:hover { transform: scale(1.1); box-shadow:0 0 25px #ff0,0 0 50px #f0f,0 0 75px #0ff; }
+body { 
+    font-family: 'Cairo', sans-serif; 
+    margin:0; padding:0; overflow-x:hidden;
+    background: linear-gradient(45deg, #b8860b, #8b7500, #a67c00, #cdaa7d); 
+    background-size: 400% 400%; 
+    animation: goldBG 20s ease infinite; 
+}
+@keyframes goldBG { 
+    0%{background-position:0% 50%;} 
+    50%{background-position:100% 50%;} 
+    100%{background-position:0% 50%;} 
+}
+#collection-popup { pointer-events:auto; z-index:9999; } 
+#collection-popup button { cursor:pointer; }
+#collection-popup h1 { 
+    font-size: 1.5rem; 
+    background: linear-gradient(to right, #000000, #FFD700); 
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+}
+#toast { 
+    pointer-events:none; 
+    position:fixed; 
+    top:50%; 
+    left:50%; 
+    transform: translate(-50%, -50%);
+    background: linear-gradient(90deg, #FFD700, #FFA500, #FFFACD, #FFD700); 
+    color:black; 
+    padding:15px 25px; 
+    border-radius:20px; 
+    font-weight:bold; 
+    font-size:1.2rem;
+    box-shadow:0 0 30px #FFD700,0 0 60px #FFA500,0 0 90px #FFFACD; 
+    opacity:0; 
+    transition: all 0.5s ease; 
+    z-index:9999; 
+    text-align:center; 
+}
+.animate-pop { animation: pop 0.6s ease forwards; } 
+@keyframes pop { 0% {transform:scale(0); opacity:0;} 100% {transform:scale(1); opacity:1;} }
+.pulse { animation: pulseGlow 1.5s infinite; } 
+@keyframes pulseGlow { 0% {box-shadow:0 0 15px #ff0;} 50% {box-shadow:0 0 45px #ff0;} 100% {box-shadow:0 0 15px #ff0;} }
+.product-fly { animation: flyIn 1s ease forwards; } 
+@keyframes flyIn { 0% {opacity:0; transform: translateY(-500px) rotate(-10deg) scale(0.3);} 50%{ transform: translateY(-50px) rotate(5deg) scale(1.05);} 100% {opacity:1; transform: translateY(0) rotate(0) scale(1);} }
+img, button { transition: all 0.3s ease; } 
+button:hover { transform: scale(1.1); box-shadow:0 0 25px #ff0,0 0 50px #f0f,0 0 75px #0ff; }
 .switch-btn { background:#FFD700; color:#000; font-weight:bold; border-radius:12px; padding:8px 12px; margin:10px auto; cursor:pointer; display:block; text-align:center; box-shadow:0 0 10px #FFD700,0 0 20px #FFA500; }
 .switch-btn:hover { transform:scale(1.1); }
 #invoice { position: fixed; top: 10%; left: 50%; transform: translateX(-50%); background: white; padding: 20px; border-radius: 20px; box-shadow: 0 0 20px #00000080; width: 90%; max-width: 500px; z-index: 99999; display: none; }
@@ -147,18 +181,18 @@ const productSizes = {
   5: { 41: "on", 42: "on", 43: "off", 44: "on", 45: "off" },
   6: { 41: "on", 42: "on", 43: "on", 44: "on", 45: "on" },
   7: { 41: "off", 42: "on", 43: "on", 44: "on", 45: "on" },
-  8: { 41: "on", 42: "off", 43: "on", 44: "on", 45: "on" },
-  9: { 41: "on", 42: "on", 43: "on", 44: "off", 45: "on" },
-  10: { 41: "on", 42: "on", 43: "off", 44: "on", 45: "on" },
-  11: { 41: "off", 42: "on", 43: "on", 44: "on", 45: "off" },
-  12: { 41: "on", 42: "on", 43: "off", 44: "on", 45: "on" },
-  13: { 41: "on", 42: "on", 43: "on", 44: "on", 45: "off" },
-  14: { 37: "on", 38: "on", 39: "off", 40: "on", 41: "on" },
-  15: { 37: "off", 38: "on", 39: "on", 40: "on", 41: "off" },
-  16: { 37: "on", 38: "on", 39: "off", 40: "on", 41: "on" },
-  17: { 37: "on", 38: "off", 39: "on", 40: "on", 41: "on" },
-  18: { 37: "on", 38: "on", 39: "on", 40: "off", 41: "on" },
-  19: { 37: "on", 38: "on", 39: "off", 40: "on", 41: "on" }
+8: { 41: "on", 42: "off", 43: "on", 44: "on", 45: "on" },
+9: { 41: "on", 42: "on", 43: "on", 44: "off", 45: "on" },
+10: { 41: "on", 42: "on", 43: "off", 44: "on", 45: "on" },
+11: { 41: "off", 42: "on", 43: "on", 44: "on", 45: "off" },
+12: { 41: "on", 42: "on", 43: "off", 44: "on", 45: "on" },
+13: { 41: "on", 42: "on", 43: "on", 44: "on", 45: "off" },
+14: { 37: "on", 38: "on", 39: "off", 40: "on", 41: "on" },
+15: { 37: "off", 38: "on", 39: "on", 40: "on", 41: "off" },
+16: { 37: "on", 38: "on", 39: "off", 40: "on", 41: "on" },
+17: { 37: "on", 38: "off", 39: "on", 40: "on", 41: "on" },
+18: { 37: "on", 38: "on", 39: "on", 40: "off", 41: "on" },
+19: { 37: "on", 38: "on", 39: "off", 40: "on", 41: "on" }
 };
 
 let selectedType = null;
